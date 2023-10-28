@@ -1,0 +1,12 @@
+{
+  "name": "<datasource_name>",
+  "description": "",
+  "type": "azureblob",
+  "credentials": {
+      "connectionString": "<datasourceConnectionString>"
+  },
+  "container": {
+      "name": "<azure_storage_blob_container_name>",
+      "query": "pdf/pages"
+  }
+}

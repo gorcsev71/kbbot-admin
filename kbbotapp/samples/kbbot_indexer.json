@@ -1,0 +1,22 @@
+{
+  "name": "<azure_cognitive_search_indexer_name>",
+  "dataSourceName": "<azure_cognitive_search_datasource_name>",
+  "targetIndexName": "<azure_cognitive_search_index_name>",
+  "skillsetName": "<azure_cognitive_search_skillset_name>",
+  "fieldMappings": [
+      {
+          "sourceFieldName": "content",
+          "targetFieldName": "content_text"
+      },
+      {
+          "sourceFieldName": "metadata_storage_name",
+          "targetFieldName": "document_name"
+      }
+  ],
+  "outputFieldMappings": [
+      {
+          "sourceFieldName": "/document/vector",
+          "targetFieldName": "content_vector"
+      }
+  ]
+}

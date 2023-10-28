@@ -1,0 +1,24 @@
+{% extends "kbbotapp/layout.html" %}
+{% block title %}
+Configure
+{% endblock %}
+{% block crumb %}
+    <a href="{% url 'kbbotapp:config_home' %}" class="crumb-item">Configure</a>
+{% endblock %}
+{% block page_title %}
+    Configure
+{% endblock %}
+{% block actions %}
+    <a class="btn btn-sm btn-outline-secondary" href="{% url 'kbbotapp:config_document_list' %}">Configure Documents</a>
+    <a class="btn btn-sm btn-outline-secondary" href="{% url 'kbbotapp:config_index_home' %}">Configure Index</a>
+    <a class="btn btn-sm btn-outline-secondary" href="{% url 'kbbotapp:config_settings_home' %}">Configure Settings</a>
+{% endblock %}
+{% block content %}
+<p>
+    Number of the documents in the knowledge base: <strong>{{documents_count}}</strong>
+    <a class="btn btn-sm btn-outline-secondary" href="{% url 'kbbotapp:config_document_add' %}">Add Document</a>
+</p>
+<p>
+    The index status is: <strong>{{index_status_text}}</strong>
+</p>
+{% endblock %}

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+{% extends "kbbotapp/layout.html" %}
+{% block title %}
+Home
+{% endblock %}
+{% block crumb %}
+    <a href="{% url 'kbbotapp:home' %}">Home</a>
+{% endblock %}
+{% block page_title %}
+    Home
+{% endblock %}
+{% block content %}
+<p>Hello</p>
+{% endblock %}

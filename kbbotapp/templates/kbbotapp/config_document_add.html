@@ -1,0 +1,22 @@
+{% extends "kbbotapp/layout.html" %}
+{% load django_bootstrap5 %}
+{% block title %}
+    Add Document
+{% endblock %}
+{% block crumb %}
+    <a href="{% url 'kbbotapp:config_home' %}" class="crumb-item">Configure</a> >
+    <a href="{% url 'kbbotapp:config_document_list' %}" class="crumb-item">Documents</a> >
+    <a href="{% url 'kbbotapp:config_document_add' %}" class="crumb-item">Add Document</a>
+{% endblock %}
+{% block content %}
+    <h2>Upload Document</h2>
+    <form method="POST" enctype="multipart/form-data" class="form">
+        <!-- Security token -->
+        {% csrf_token %}
+    
+        <!-- Using the formset -->
+        {% bootstrap_form form %}
+        <button type="submit" class="btn btn-primary" onclick="showSpinner()">Upload</button>
+    </form>
+{% endblock %}
+

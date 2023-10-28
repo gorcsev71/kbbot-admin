@@ -1,0 +1,22 @@
+{% extends "kbbotapp/layout.html" %}
+{% block title %}
+Delete Document
+{% endblock %}
+{% block crumb %}
+    <a href="{% url 'kbbotapp:config_home' %}">Configure</a> >
+    <a href="{% url 'kbbotapp:config_document_list' %}">Documents</a> >
+    <a href="{% url 'kbbotapp:config_document_detail' pk=document.pk%}">Delete Document</a>
+{% endblock %}
+{% block page_title %}
+    Delete Document
+{% endblock %}
+{% block content %}
+<form method="post" class="form">
+    {% csrf_token %}
+    <p>Are you sure that you want to delete the document:<mark>"{{document}}"</mark>?</p>
+    <p class="form-buttons">
+        <input type="submit" class="btn btn-primary" value="Delete">
+        <a href="{% url 'kbbotapp:config_document_list'%}" class="btn btn-outline">Cancel</a>
+    </p>
+</form>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "kbbotapp/layout.html" %}
+{% block title %}
+Document
+{% endblock %}
+{% block crumb %}
+    <a href="{% url 'kbbotapp:config_home' %}">Configure</a> >
+    <a href="{% url 'kbbotapp:config_document_list' %}">Documents</a> >
+    <a href="{% url 'kbbotapp:config_document_detail' pk=document.pk%}">View Document</a>
+{% endblock %}
+{% block page_title %}
+    Document
+{% endblock %}
+{% block actions %}
+    <a class="btn btn-sm btn-outline-secondary" href="{% url 'kbbotapp:config_document_delete' pk=document.pk %}">
+        Delete Document
+    </a>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-2">Document Id:</div><div class="col-10">{{ document.pk }}</div>
+    </div>
+    <div class="row">
+        <div class="col-2">Document Name:</div><div class="col-10">{{ document.name }}</div>
+    </div>
+    <div class="row">
+        <div class="col-2">File name:</div><div class="col-10">{{ document.sourcefile.name }}</div>
+    </div>
+    <p>Pages:</p>
+    <div class="row">
+        <div class="row">
+            <div class="col-1"><strong>No</strong></div>
+            <div class="col-7"><strong>Content</strong></div>
+            <div class="col-4"><strong>Vector</strong></div>
+        </div>
+        {% for p in pages %}
+        <div class="row">
+            <div class="col-1">{{ p.no }}</div>
+            <div class="col-7">{{ p.content_text|truncatechars:350 }}</div>
+            <div class="col-4">{{ p.content_vector|truncatechars:150 }}</div>
+        </div>
+        {% endfor %}    
+    </div>
+{% endblock %}

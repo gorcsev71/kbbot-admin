@@ -1,0 +1,33 @@
+{
+  "name": "<azure_cognitive_search_skillset_name>",
+  "description": "",
+  "skills":
+  [
+      {
+          "@odata.type": "#Microsoft.Skills.Custom.WebApiSkill",
+          "name": "kbbot-embedder",
+          "uri": "https://kbbot-func-app.azurewebsites.net/api/kbbot_embedder",
+          "httpMethod": "POST",
+          "timeout": "PT30S",
+          "batchSize": 1000,
+          "degreeOfParallelism": 1,
+          "httpHeaders": {},
+          "inputs": [
+              {
+                  "name": "text",
+                  "source": "/document/content"
+              },
+              {
+                  "name": "name",
+                  "source": "/document/metadata_storage_name"
+              }
+          ],
+          "outputs": [
+              {
+                  "name": "vector",
+                  "targetName": "vector"
+              }
+          ]
+      }
+  ]
+}

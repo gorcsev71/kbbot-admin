@@ -1,0 +1,15 @@
+Documents:
+    letörölni a json file-t, ha hozzáadunk vagy elveszünk dokumentumot
+
+Configure:
+
+Settings:
+    table-t átírni grid-re
+
+Chat:
+   
+
+végül implementáni kellene a chat kódot pythonban:
+    - nem indul el a webserver
+
+

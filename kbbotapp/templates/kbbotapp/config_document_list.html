@@ -1,0 +1,41 @@
+{% extends "kbbotapp/layout.html" %}
+{% block title %}
+Documents
+{% endblock %}
+{% block crumb %}
+    <a href="{% url 'kbbotapp:config_home' %}">Configure</a> >
+    <a href="{% url 'kbbotapp:config_document_list' %}">Documents</a>
+{% endblock %}
+{% block page_title %}
+    Documents
+{% endblock %}
+{% block actions %}
+    <a class="btn btn-sm btn-outline-secondary" href="{% url 'kbbotapp:config_document_add' %}">Add New Document</a>
+    {% if documents_count > 0 %}
+        <a class="btn btn-sm btn-outline-secondary" href="{% url 'kbbotapp:config_document_upload'%}" onclick="showSpinner()">Upload Pages to Container</a>
+    {% endif %}
+{% endblock %}
+{% block content %}
+    <!-- Iterate over object_list -->
+    {% for document in document_list %} 
+    <!-- Display Objects -->
+    <div class="row" style="padding: 3px;">
+        <div class="col-3">
+            <a href="{% url 'kbbotapp:config_document_detail' pk=document.pk %}">{{ document.name }}</a> 
+        </div>
+        <div class="col-7">
+            {{ document.file_name }}
+        </div>
+        <div class="col-1">
+            {{ document.pages.count }} pages
+        </div>
+        <div class="col-1">
+            <a href="{% url 'kbbotapp:config_document_delete' pk=document.pk %}" class="btn btn-sm btn-outline-secondary">Delete</a> 
+        </div>
+    </div>
+    <!-- If object_list is empty  -->
+    {% empty %} 
+    <li>No objects yet.</li> 
+    {% endfor %} 
+</ul>
+{% endblock %}

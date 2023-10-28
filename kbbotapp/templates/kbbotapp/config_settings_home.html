@@ -1,0 +1,27 @@
+{% extends "kbbotapp/layout.html" %}
+{% load django_bootstrap5 %}
+{% block title %}
+Settings
+{% endblock %}
+{% block crumb %}
+    <a href="{% url 'kbbotapp:config_home' %}">Configure</a> >
+    <a href="{% url 'kbbotapp:config_settings_home' %}">Settings</a>
+{% endblock %}
+{% block page_title %}
+    Settings
+{% endblock %}
+{% block actions %}
+    <a class="btn btn-sm btn-outline-secondary" href="{% url 'kbbotapp:config_settings_update' pk=settings.pk %}">Edit Settings</a>
+    <a class="btn btn-sm btn-outline-secondary" href="{% url 'kbbotapp:config_settings_reset' pk=settings.pk %}">Reset to Default</a>
+{% endblock %}
+{% block content %}
+<table class="table table-striped">
+    {% for f in setting_fields %}
+    <tr>
+        <td>{{ f.name }}:</td><td>{{ f.value }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
+
+

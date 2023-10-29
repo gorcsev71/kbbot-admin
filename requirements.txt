@@ -1,7 +1,8 @@
 django
-django-bootstrap
+django-bootstrap5
 django-environ
 pypdf2
+pandas
 openai
 azure-core
 azure-identity

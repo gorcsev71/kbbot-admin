@@ -13,6 +13,7 @@
 Chat
 {% endblock %}
 {% block crumb %}
+    <a href="{% url 'kbbotapp:home' %}">Home</a> >
     <a href="{% url 'kbbotapp:chat' %}">Chat</a>
 {% endblock %}
 {% block page_title %}
@@ -20,28 +21,24 @@ Chat
 {% endblock %}
 {% block content %}
     {% if documents_count == 0 %}
-        <p>There are no documents in the knowledge base.</p>
-        <a class="btn btn-sm btn-outline-secondary" href="{% url 'kbbotapp:config_document_list' %}">Configure Documents</a>
+        <p>There are no documents in the knowledge base. 
+        <a class="btn btn-sm btn-outline-primary" href="{% url 'kbbotapp:config_document_list' %}">Configure Documents</a>
+        </p>
+    {% else %}
+        <form action="" method="post" onsubmit="hideAnswer()">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <button type="submit" class="btn btn-primary">
+                <span id="spinner-button" class="spinner-border spinner-border-sm" style="display: none;"></span>
+                Submit Question
+            </button>
+        </form>        
     {% endif %}
-    <div class="card">
-        <div class="card-header">
-            Ask a question below ...
-        </div>
-        <div class="card-body">
-            <form action="" method="post" onsubmit="hideAnswer()">
-                {% csrf_token %}
-                {% bootstrap_form form %}
-                <button type="submit" class="btn btn-primary">Submit Question</button>
-            </form>        
-        </div>
-    </div>
-    <p></p>
-    <div id="spinner" class="spinner-border" style="display: none;"></div>
-    <p></p>
+        <p></p>
     {% if answer != "empty" %}
         <div id="answer" class="card">
             <div class="card-header">
-                The answer is:
+                The Answer
             </div>
             <div class="card-body">
                 {{ answer }}

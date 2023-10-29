@@ -4,6 +4,7 @@
 Settings
 {% endblock %}
 {% block crumb %}
+    <a href="{% url 'kbbotapp:home' %}">Home</a> >
     <a href="{% url 'kbbotapp:config_home' %}">Configure</a> >
     <a href="{% url 'kbbotapp:config_settings_home' %}">Settings</a> >
     <a href="{% url 'kbbotapp:config_settings_update' pk=setting_pk %}">Edit Settings</a>

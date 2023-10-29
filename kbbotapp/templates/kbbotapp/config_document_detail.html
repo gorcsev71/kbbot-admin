@@ -3,6 +3,7 @@
 Document
 {% endblock %}
 {% block crumb %}
+    <a href="{% url 'kbbotapp:home' %}">Home</a> >
     <a href="{% url 'kbbotapp:config_home' %}">Configure</a> >
     <a href="{% url 'kbbotapp:config_document_list' %}">Documents</a> >
     <a href="{% url 'kbbotapp:config_document_detail' pk=document.pk%}">View Document</a>
@@ -11,7 +12,7 @@ Document
     Document
 {% endblock %}
 {% block actions %}
-    <a class="btn btn-sm btn-outline-secondary" href="{% url 'kbbotapp:config_document_delete' pk=document.pk %}">
+    <a class="btn btn-sm btn-outline-primary" href="{% url 'kbbotapp:config_document_delete' pk=document.pk %}">
         Delete Document
     </a>
 {% endblock %}

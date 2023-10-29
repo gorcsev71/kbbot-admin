@@ -88,7 +88,7 @@ def search_for_answer(query):
             print(f"{result['document_name']}, {result['@search.score']}")
             answer += result["content_text"] + " "
 
-        system_prompt = "You answer the question based on the below knowledge base. If the answer cannot be found in the knowledge base, write 'i could not find the answer.'. Here is your knowledge base: " + answer
+        system_prompt = "You answer the question based on the below knowledge base. If the answer cannot be found in the knowledge base, respont 'Sorry, I could not find the answer in my knowledge base.'. Here is your knowledge base: " + answer
         chat_messages = [{"role": "system", "content": system_prompt}]
         message = query
         chat_messages.append({"role": "user", "content": message},)
@@ -228,9 +228,6 @@ def create_index_json():
     index_df = pd.DataFrame(row_list)
     # print(index_df)
     index_df.to_json("index_data.json", orient="records")
-    app_settings = read_app_settings()
-    app_settings.index_status = Settings.IndexStatusChoices.UP_TO_DATE
-    app_settings.save()
 
 class IndexCreateJSON(RedirectView):
     url = "../"
@@ -425,7 +422,6 @@ class IndexCreate(RedirectView):
         create_index_definition(app_settings)
         app_settings.index_status = Settings.IndexStatusChoices.CREATED
         app_settings.save()
-
         # datasource
         create_datasource(app_settings)
         # skillset definition
@@ -449,6 +445,9 @@ class DocumentList(ListView):
 
 """ ----- CONFIGURE / DOCUMENT / ADD ----- """
 
+def update_documents_and_index():
+    pass
+
 class DocumentAdd(CreateView):
     model = Document
     template_name = "kbbotapp/config_document_add.html"
@@ -456,14 +455,27 @@ class DocumentAdd(CreateView):
     fields = ['name', 'sourcefile']
     success_url = reverse_lazy("kbbotapp:config_document_list")
 
-    def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        app_settings = read_app_settings()
+    def get_success_url(self) -> str:
+        document = self.object
+        
+        # delete all documents from container
+        app_settings = read_app_settings()        
+        container_name = app_settings.azure_storage_blob_container_name
+        blob_service_client = BlobServiceClient(f"https://{app_settings.azure_storage_account_name}.blob.core.windows.net",
+                                                credential=app_settings.azure_storage_access_key)
+        container_client = blob_service_client.get_container_client(container=container_name)        
+        delete_pages_from_container(blob_service_client, container_client, container_name)
+        # delete vector index data
+        delete_index(app_settings) 
+        app_settings.index_status = Settings.IndexStatusChoices.UNDEFINED
+        app_settings.save()
+        # delete JSON file
+        if os.path.isfile("index_data.json"):
+            os.remove("index_data.json")
+
         # get text from PDF
-        self.object = form.save()
-        pdf = PdfReader(self.object.sourcefile)
-        # save the document to get the pk
-        # obj.save()
-        if Page.objects.filter(document=self.object).count() == 0:
+        pdf = PdfReader(document.sourcefile)
+        if Page.objects.filter(document=document).count() == 0:
             page_number = 1
             for page in pdf.pages:
                 text = page.extract_text()
@@ -473,7 +485,7 @@ class DocumentAdd(CreateView):
                                                      model=app_settings.openai_embedding_model)
                 # Extract the embedding vector from the API response and return it.
                 embedding_vector = embeddings['data'][0]['embedding']
-                page = Page.objects.create(document=self.object,
+                page = Page.objects.create(document=document,
                                            content_vector=embedding_vector,
                                            content_text=text,
                                            no=page_number)
@@ -481,11 +493,29 @@ class DocumentAdd(CreateView):
             app_settings.index_status = Settings.IndexStatusChoices.OBSOLETE
             app_settings.save()
 
-            # TODO: delete index_data.json
+            # upload the documents to the container
+            upload_pages_to_container(container_client)
+            # recreate the index on Azure
+            # index definition
+            create_index_definition(app_settings)
+            app_settings.index_status = Settings.IndexStatusChoices.CREATED
+            app_settings.save()
+            create_index_json()
+            # datasource
+            create_datasource(app_settings)
+            # skillset definition
+            create_skillset(app_settings)
+            # indexer definition
+            create_indexer(app_settings)
+            app_settings.index_status = Settings.IndexStatusChoices.UP_TO_DATE
+            app_settings.save()
             
-            messages.success(self.request, f"Text embeddings for {str(page_number-1)} pages were successfully created.")
-            # messages.warning(self.request, "Don't forget to refresh the index")
-        return HttpResponseRedirect(self.get_success_url())
+            # delete the file from disk
+            if os.path.isfile(self.object.sourcefile.name):
+                os.remove(self.object.sourcefile.name)
+            
+            messages.success(self.request, f"Document {document} with {str(page_number-1)} pages were successfully added to the knowledge base. The vector index was updated.")
+        return super().get_success_url()
 
 """ ----- CONFIGURE / DOCUMENT / VIEW ----- """
 
@@ -507,19 +537,74 @@ class DocumentDelete(DeleteView):
     template_name = "kbbotapp/config_document_confirm_delete.html"
     context_object_name = "document"
     success_url = reverse_lazy('kbbotapp:config_document_list')
+    document = None
 
-    def form_valid(self, form):
+    def get_success_url(self) -> str:
         document = self.get_object()
-        # TODO: create the container if not available
-        # TODO: upload documents to the store
-        # TODO: let the indexer update the index
-        app_settings = read_app_settings()
-        app_settings.index_status = Settings.IndexStatusChoices.OBSOLETE
+        # delete all documents from container
+        app_settings = read_app_settings()        
+        container_name = app_settings.azure_storage_blob_container_name
+        blob_service_client = BlobServiceClient(f"https://{app_settings.azure_storage_account_name}.blob.core.windows.net",
+                                                credential=app_settings.azure_storage_access_key)
+        container_client = blob_service_client.get_container_client(container=container_name)        
+        delete_pages_from_container(blob_service_client, container_client, container_name)
+        # delete vector index data
+        delete_index(app_settings) 
+        app_settings.index_status = Settings.IndexStatusChoices.UNDEFINED
         app_settings.save()
-        messages.success(self.request, f"The document '{document}' was deleted successfully.")
-        messages.warning(self.request, "Don't forget to re-upload the index")
-        return super(DocumentDelete,self).form_valid(form)
+        # delete JSON file
+        if os.path.isfile("index_data.json"):
+            os.remove("index_data.json")
+        # refresh vector index data
+        if Document.objects.all().count() == 0:
+            create_index_definition(app_settings)       
+            app_settings.index_status = Settings.IndexStatusChoices.CREATED
+            app_settings.save()
+            messages.success(self.request, f"The document '{document}' was deleted successfully.")
+        else:
+            app_settings.index_status = Settings.IndexStatusChoices.OBSOLETE
+            app_settings.save()
+            create_index_json()
+            # upload the documents to the container
+            upload_pages_to_container(container_client)
+            # recreate the index on Azure
+            delete_index(app_settings)        
+            # index definition
+            create_index_definition(app_settings)
+            app_settings.index_status = Settings.IndexStatusChoices.CREATED
+            app_settings.save()
+            create_index_json()
+            # datasource
+            create_datasource(app_settings)
+            # skillset definition
+            create_skillset(app_settings)
+            # indexer definition
+            create_indexer(app_settings)
+            app_settings.index_status = Settings.IndexStatusChoices.UP_TO_DATE
+            app_settings.save()
+            messages.success(self.request, f"The document {document} was deleted from the knowledge base successfully. The vector index was updated.")
+        return super().get_success_url()
     
+def delete_pages_from_container(blob_service_client:BlobServiceClient,
+                                container_client:ContainerClient,
+                                container_name:str):
+    # delete all files from /pages
+    blob_list = container_client.list_blobs(name_starts_with="pdf/pages/")
+    for blob in blob_list:
+        blob_name = blob.name
+        print(f"Name: {blob_name}")
+        blob_client = blob_service_client.get_blob_client(container=container_name, blob=blob_name)
+        blob_client.delete_blob(delete_snapshots="include")
+
+def upload_pages_to_container(container_client:ContainerClient):
+    documents = Document.objects.all()
+    for document in documents:
+        for page in document.pages.all():
+            data = page.content_text
+            filename = "pdf/pages/" + document.name + "_page_" + str(page.no) + ".txt"
+            blob_client = container_client.upload_blob(name=filename, data=data, overwrite=True)
+
+
 class DocumentUpload(RedirectView):
     url = "../"
 
@@ -531,21 +616,11 @@ class DocumentUpload(RedirectView):
                                                 credential=app_settings.azure_storage_access_key)
         container_client = blob_service_client.get_container_client(container=container_name)
         
-        # delete all files from /pages
-        blob_list = container_client.list_blobs(name_starts_with="pdf/pages/")
-        for blob in blob_list:
-            blob_name = blob.name
-            print(f"Name: {blob_name}")
-            blob_client = blob_service_client.get_blob_client(container=container_name, blob=blob_name)
-            blob_client.delete_blob(delete_snapshots="include")
+        # delete all files from /pdf/pages
+        delete_pages_from_container(blob_service_client, container_client, container_name)
 
         # uploading all pages
-        documents = Document.objects.all()
-        for document in documents:
-            for page in document.pages.all():
-                data = page.content_text
-                filename = "pdf/pages/" + document.name + "_page_" + str(page.no) + ".txt"
-                blob_client = container_client.upload_blob(name=filename, data=data, overwrite=True)
+        upload_pages_to_container(container_client)
 
         messages.success(self.request, f"Document pages were successfully uploaded.")
         return super().get_redirect_url(*args, **kwargs)

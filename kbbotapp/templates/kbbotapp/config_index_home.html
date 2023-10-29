@@ -3,6 +3,7 @@
 Index
 {% endblock %}
 {% block crumb %}
+    <a href="{% url 'kbbotapp:home' %}">Home</a> >
     <a href="{% url 'kbbotapp:config_home' %}" class="crumb-item">Configure</a> >
     <a href="{% url 'kbbotapp:config_index_home' %}" class="crumb-item">Index</a>
 {% endblock %}
@@ -10,7 +11,7 @@ Index
     Index
 {% endblock %}
 {% block actions %}
-    <a class="btn btn-sm btn-outline-secondary" href="{% url 'kbbotapp:config_index_create' %}" onclick="showSpinner()">Create Index on Azure</a>
+    <a class="btn btn-sm btn-outline-primary" href="{% url 'kbbotapp:config_index_create' %}" onclick="showSpinner()">Create Index on Azure</a>
     <a class="btn btn-sm btn-outline-secondary" href="{% url 'kbbotapp:config_index_refresh' %}" onclick="showSpinner()">Create Index JSON</a>
     <a class="btn btn-sm btn-outline-secondary" href="{% url 'kbbotapp:config_index_upload' %}" onclick="showSpinner()">Upload Index JSON</a>
 {% endblock %}
@@ -18,7 +19,6 @@ Index
 <div id="spinner" class="spinner-border" style="display: none;">faszom</div>
 <p>
     Number of the documents in the knowledge base: <strong>{{documents_count}}</strong>
-    <a class="btn btn-sm btn-outline-secondary" href="{% url 'kbbotapp:config_document_list' %}">Configure Documents</a>
 </p>
 <p>
     The index status is: <strong>{{index_status_text}}</strong>

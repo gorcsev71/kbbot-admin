@@ -11,12 +11,13 @@ Delete Document
     Delete Document
 {% endblock %}
 {% block content %}
-<form method="post" class="form">
-    {% csrf_token %}
-    <p>Are you sure that you want to delete the document:<mark>"{{document}}"</mark>?</p>
-    <p class="form-buttons">
-        <input type="submit" class="btn btn-primary" value="Delete">
-        <a href="{% url 'kbbotapp:config_document_list'%}" class="btn btn-outline">Cancel</a>
-    </p>
-</form>
+    <form method="POST" class="form">
+        {% csrf_token %}
+        <p>Are you sure that you want to delete the document: <mark>{{document}}</mark>?</p>
+        <button type="submit" class="btn btn-primary" onclick="showSpinner();">
+            <span id="spinner-button" class="spinner-border spinner-border-sm" style="display: none;"></span>
+            Delete
+        </button>
+        <a href="{% url 'kbbotapp:config_document_list'%}" class="btn btn-outline-secondary">Cancel</a>
+    </form>
 {% endblock %}

@@ -24,7 +24,9 @@
     <!--link rel="stylesheet" type="text/css" href="{% static 'kbbotapp/site.css' %}"/-->
     <script>
         function showSpinner() {
-            document.getElementById("spinner").style.display = "block";
+            document.getElementById("spinner").style.display = "inline-block";
+            document.getElementById("spinner-text").style.display = "inline-block";
+            document.getElementById("spinner-button").style.display = "inline-block";
         }
     </script>
 </head>
@@ -32,38 +34,45 @@
     <div class="container">
         <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
             <div class="container-fluid">
-                <ul class="navbar-nav">
+                <a class="navbar-brand" href="{% url 'kbbotapp:home' %}">KB Bot Admin</a>
+<!--                 <ul class="navbar-nav">
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'kbbotapp:home' %}">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'kbbotapp:chat' %}">Chat</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'kbbotapp:config_home' %}">Configure</a>
-                    </li>
                 </ul>
-            </div>
+ -->            </div>
         </nav>
         <div class="crumb">
             Navigation: {% block crumb%}{% endblock %}
         </div>
-        <div class="h2">
-            <p class="h2">{% block page_title %}{% endblock %}</p> 
-        </div>
-        <div>
-            {% block actions %}{% endblock %}
-        </div>
         <p></p>
         {% bootstrap_messages %}
+        <p></p>        
+        <div class="card shadow">
+            <div class="card-body">
+                <h2>{% block page_title %}{% endblock %}</h2>
+                <div>
+                    {% block actions %}{% endblock %}
+                </div>
+                <p></p>
+                <span id="spinner" class="spinner-border  text-warning" style="display: none;"></span>  
+                <span id="spinner-text" class="text-warning" style="display:none"> Working, please wait ...</span>          
+            </div>
+        </div>
+        <p></p>   
+        <div class="card shadow"> 
+            <div class="card-body">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
         <p></p>
-        <div id="spinner" class="spinner-border" style="display: none;"></div>    
-        <hr>
-        {% block content %}
-        {% endblock %}
-        <hr/>
         <footer>
-            <p>&copy; KB-Bot 2023</p>
+            <div class="card shadow">
+                <div class="card-body">
+                    &copy; KB-Bot 2023
+                </div>
+            </div>
         </footer>
 </div>
 </body>

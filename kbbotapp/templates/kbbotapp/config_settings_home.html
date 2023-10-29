@@ -4,6 +4,7 @@
 Settings
 {% endblock %}
 {% block crumb %}
+    <a href="{% url 'kbbotapp:home' %}">Home</a> >
     <a href="{% url 'kbbotapp:config_home' %}">Configure</a> >
     <a href="{% url 'kbbotapp:config_settings_home' %}">Settings</a>
 {% endblock %}
@@ -11,7 +12,7 @@ Settings
     Settings
 {% endblock %}
 {% block actions %}
-    <a class="btn btn-sm btn-outline-secondary" href="{% url 'kbbotapp:config_settings_update' pk=settings.pk %}">Edit Settings</a>
+    <a class="btn btn-sm btn-outline-primary" href="{% url 'kbbotapp:config_settings_update' pk=settings.pk %}">Edit Settings</a>
     <a class="btn btn-sm btn-outline-secondary" href="{% url 'kbbotapp:config_settings_reset' pk=settings.pk %}">Reset to Default</a>
 {% endblock %}
 {% block content %}

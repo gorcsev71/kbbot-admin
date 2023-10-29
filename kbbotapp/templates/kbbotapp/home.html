@@ -10,5 +10,8 @@ Home
     Home
 {% endblock %}
 {% block content %}
-<p>Hello</p>
+<h5>Hello There,</h5>
+<p>You can either 
+<a href="{% url 'kbbotapp:chat' %}" class="btn btn-sm btn-outline-primary">Chat</a> with me, or 
+<a href="{% url 'kbbotapp:config_home' %}" class="btn btn-sm btn-outline-primary">Configure</a> my knowledge base.
 {% endblock %}

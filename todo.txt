@@ -1,5 +1,6 @@
 Documents:
-    letörölni a json file-t, ha hozzáadunk vagy elveszünk dokumentumot
+    Add - hibás form esetén a spinner
+    Delete - néha nem megy a spinner
 
 Configure:
 
@@ -7,9 +8,3 @@ Settings:
     table-t átírni grid-re
 
 Chat:
-   
-
-végül implementáni kellene a chat kódot pythonban:
-    - nem indul el a webserver
-
-

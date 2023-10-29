@@ -9,10 +9,10 @@ from django.db import models
 class Settings(models.Model):
     
     class IndexStatusChoices(models.IntegerChoices):
-        OBSOLETE = 0, 'Obsolete'
-        UP_TO_DATE = 1, 'Up-to-date (not yet uploaded)'
-        UPLOADED = 2, 'Up-to-date and uploaded'
-        CREATED = 4, 'definitions created'
+        UNDEFINED = 0, 'Index status is undefined'
+        CREATED = 1, 'Index definition is created'
+        OBSOLETE = 2, 'Vector index is obsolete'
+        UP_TO_DATE = 3, 'Vector index is up-to-date'
 
     class OpenAIModelChoices(models.TextChoices):
         GPT3 = 'gpt-3.5-turbo', 'GPT 3.5 Turbo'
@@ -67,8 +67,6 @@ class Settings(models.Model):
 
 class Document(models.Model):
     name = models.CharField(max_length=100,
-                            null=True,
-                            blank=True,
                             verbose_name='document name')
     sourcefile = models.FileField()
 

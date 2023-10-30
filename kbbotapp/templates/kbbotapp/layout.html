@@ -25,7 +25,6 @@
     <script>
         function showSpinner() {
             document.getElementById("spinner").style.display = "inline-block";
-            document.getElementById("spinner-text").style.display = "inline-block";
             document.getElementById("spinner-button").style.display = "inline-block";
         }
     </script>
@@ -55,8 +54,11 @@
                     {% block actions %}{% endblock %}
                 </div>
                 <p></p>
-                <span id="spinner" class="spinner-border  text-warning" style="display: none;"></span>  
-                <span id="spinner-text" class="text-warning" style="display:none"> Working, please wait ...</span>          
+                <div id="spinner" class="flex justify-content-left" style="display:none">
+                    <div class="spinner-border text-warning" role="status"></div>
+                    <span class="text-white">..</span>
+                    <span class="text-warning" style="display: inline;"> Working, please wait ...</span>
+                </div>
             </div>
         </div>
         <p></p>   

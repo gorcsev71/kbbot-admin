@@ -16,13 +16,14 @@ Settings
     <a class="btn btn-sm btn-outline-secondary" href="{% url 'kbbotapp:config_settings_reset' pk=settings.pk %}">Reset to Default</a>
 {% endblock %}
 {% block content %}
-<table class="table table-striped">
     {% for f in setting_fields %}
-    <tr>
-        <td>{{ f.name }}:</td><td>{{ f.value }}</td>
-    </tr>
+    <div class="container legend">
+        <div class="row">
+            <div class="col-4">{{ f.name }}:</div>
+            <div class="col-8">{{ f.value }}</div>
+        </div>
+    </div>
     {% endfor %}
-</table>
 {% endblock %}
 
 

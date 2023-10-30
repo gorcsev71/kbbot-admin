@@ -1,3 +1,6 @@
+postgres integration
+local git (azure) integration
+
 Documents:
     Add - hibás form esetén a spinner
     Delete - néha nem megy a spinner

@@ -1,13 +1,12 @@
-postgres integration - nem tudok belépni
-local git (azure) integration
+
+- Create new setting for container folder (/pdf/pages)
 
 Documents:
-    Add - hibás form esetén a spinner
-    Delete - néha nem megy a spinner
+    Add - spinner is not working sometimes
+    Delete - spinner is not working sometimes
 
 Configure:
 
 Settings:
-    table-t átírni grid-re
 
 Chat:

@@ -41,7 +41,17 @@ Chat
                 The Answer
             </div>
             <div class="card-body">
-                {{ answer }}
+                <div class="text-success">{{ answer }}</div>
+            </div>
+            <div class="card-footer">
+                <div>
+                    <small class="text-muted"> used {{ model}} for {{ tokens }} tokens / {{ cost|floatformat:4 }} USD </small>
+                </div>
+                {% for s in sources%}   
+                    <div>
+                        <small class="text-muted">{{ s.score|floatformat:2 }}% {{ s.name }}</small>
+                    </div>
+                {% endfor%}
             </div>
         </div>
     {% endif %}

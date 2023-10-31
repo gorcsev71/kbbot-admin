@@ -19,6 +19,7 @@ from PyPDF2 import PdfReader
 import json
 import pandas as pd
 import openai
+import tiktoken
 from azure.identity import DefaultAzureCredential
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
@@ -63,7 +64,63 @@ class Home(TemplateView):
     
 """ ----- CHAT ----- """
 
-def search_for_answer(query):
+def openai_api_calculate_cost(prompt_text, completion_text, model="gpt-3.5-turbo"):
+    pricing = {
+        'gpt-3.5-turbo': {
+            'prompt': 0.0015,
+            'completion': 0.002,
+        },
+        'gpt-3.5-turbo-16k': {
+            'prompt': 0.003,
+            'completion': 0.004,
+        },
+        'gpt-4': {
+            'prompt': 0.03,
+            'completion': 0.06,
+        },
+        'gpt-4-32k': {
+            'prompt': 0.06,
+            'completion': 0.12,
+        },
+        'text-embedding-ada-002': {
+            'prompt': 0.0001,
+            'completion': 0.0001,
+        }
+    }
+
+    try:
+        model_pricing = pricing[model]
+    except KeyError:
+        raise ValueError("Invalid model specified")
+    
+    encoding = tiktoken.encoding_for_model(model)
+    prompt_tokens = len(encoding.encode(prompt_text))
+    completion_tokens = len(encoding.encode(completion_text))
+    total_tokens = prompt_tokens + completion_tokens
+
+    prompt_cost = prompt_tokens * model_pricing['prompt'] / 1000
+    completion_cost = completion_tokens * model_pricing['completion'] / 1000
+
+    total_cost = prompt_cost + completion_cost
+    print(f"\nTokens used:  {prompt_tokens} prompt + {completion_tokens} completion = {total_tokens} tokens")
+    print(f"Total cost for {model}: ${total_cost:.4f}\n")
+
+    return {'total_cost': total_cost, 'total_tokens': total_tokens}
+
+class QueryResult():
+    sources:list
+    answer:str
+    cost:float
+    tokens:int
+
+    def __init__(self) -> None:
+        self.sources = []
+        self.answer = ""
+        self.tokens = 0
+        self.cost = 0
+
+def search_for_answer(query)->QueryResult:
+    query_result = QueryResult()
     app_settings = read_app_settings()
     search_client = SearchClient(f"https://{app_settings.azure_cognitive_search_service_name}.search.windows.net"
                                  ,app_settings.azure_cognitive_search_index_name,
@@ -82,22 +139,34 @@ def search_for_answer(query):
         print(results.get_answers())
     else:
         print("No Answer")
-        answer = ""
+        answer_passage = ""
         for result in results:
             score = result["@search.score"]
-            print(f"{result['document_name']}, {result['@search.score']}")
-            answer += result["content_text"] + " "
+            document_name = result['document_name'].replace("_page", " Page ").replace(".txt", "")
+            print(f"{result['document_name']}, {score}")
+            answer_passage += result["content_text"] + " "
+            query_result.sources.append({'name': result['document_name'], 'score': score * 100})
 
-        system_prompt = "You answer the question based on the below knowledge base. If the answer cannot be found in the knowledge base, respont 'Sorry, I could not find the answer in my knowledge base.'. Here is your knowledge base: " + answer
+        system_prompt = "You answer the question based on the below knowledge base. If the answer cannot be found in the knowledge base, respont 'Sorry, I could not find the answer in my knowledge base.'. Here is your knowledge base: "
+        system_prompt += answer_passage
         chat_messages = [{"role": "system", "content": system_prompt}]
+        
         message = query
         chat_messages.append({"role": "user", "content": message},)
+        # TODO: calculate prompt_tokens = system_prompt + query
+
         chat = openai.ChatCompletion.create(model=app_settings.openai_model_name,
                                             messages=chat_messages)
         reply = chat.choices[0].message.content
         print(f"ChatGPT: {reply}")
-        # TODO: Add the sources as well
-    return reply
+
+        # TODO: calculate completion_tokens = reply
+        cost_and_tokens = openai_api_calculate_cost(system_prompt + query, reply,
+                                                      app_settings.openai_model_name)
+        query_result.cost = cost_and_tokens['total_cost']
+        query_result.tokens = cost_and_tokens['total_tokens']
+        query_result.answer = reply
+    return query_result
 
 class Chat(View):
     
@@ -116,6 +185,7 @@ class Chat(View):
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
+        app_settings = read_app_settings()
         form = self.form_class(data=request.POST)
         context = {}
         context["documents_count"] = Document.objects.count()
@@ -124,8 +194,12 @@ class Chat(View):
         context["form"] = form
         if form.is_valid():
             query = form.cleaned_data["question"]
-            answer = search_for_answer(query)
-            context["answer"] = answer
+            queryresult = search_for_answer(query)
+            context["answer"] = queryresult.answer
+            context["model"] = app_settings.openai_model_name
+            context["tokens"] = queryresult.tokens
+            context["cost"] = queryresult.cost
+            context["sources"] = queryresult.sources
         return render(request, self.template_name, context)
 
 """ ----- CONFIGURE ----- """

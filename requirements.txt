@@ -4,6 +4,7 @@ python-dotenv
 pypdf2
 pandas
 openai
+tiktoken
 azure-core
 azure-identity
 azure-search-documents==11.4.0b8

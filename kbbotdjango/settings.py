@@ -15,39 +15,30 @@ import environ
 import os
 from django.contrib.messages import constants as messages
 
-env = environ.Env(
-    # set casting, default value
-    DEBUG=(bool, False)
-)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 # BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
-
-OPENAI_API_KEY = env('OPENAI_API_KEY')
-OPENAI_EMBEDDING_MODEL = env('OPENAI_EMBEDDING_MODEL')
-AZURE_COGNITIVE_SEARCH_SERVICE_NAME = env('AZURE_COGNITIVE_SEARCH_SERVICE_NAME')
-AZURE_COGNITIVE_SEARCH_API_KEY = env('AZURE_COGNITIVE_SEARCH_API_KEY')
-AZURE_COGNITIVE_SEARCH_INDEX_NAME = env('AZURE_COGNITIVE_SEARCH_INDEX_NAME')
-AZURE_COGNITIVE_SEARCH_INDEXER_NAME = env('AZURE_COGNITIVE_SEARCH_INDEXER_NAME')
-AZURE_COGNITIVE_SEARCH_DATASOURCE_NAME = env('AZURE_COGNITIVE_SEARCH_DATASOURCE_NAME')
-AZURE_COGNITIVE_SEARCH_SKILLSET_NAME = env('AZURE_COGNITIVE_SEARCH_SKILLSET_NAME')
-AZURE_COGNITIVE_SEARCH_FUNCTION_URI = env('AZURE_COGNITIVE_SEARCH_FUNCTION_URI')
-AZURE_STORAGE_ACCOUNT_NAME = env('AZURE_STORAGE_ACCOUNT_NAME')
-AZURE_STORAGE_BLOB_CONTAINER_NAME = env('AZURE_STORAGE_BLOB_CONTAINER_NAME')
-AZURE_STORAGE_ACCESS_KEY = env('AZURE_STORAGE_ACCESS_KEY')
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+OPENAI_EMBEDDING_MODEL = os.getenv('OPENAI_EMBEDDING_MODEL')
+AZURE_COGNITIVE_SEARCH_SERVICE_NAME = os.getenv('AZURE_COGNITIVE_SEARCH_SERVICE_NAME')
+AZURE_COGNITIVE_SEARCH_API_KEY = os.getenv('AZURE_COGNITIVE_SEARCH_API_KEY')
+AZURE_COGNITIVE_SEARCH_INDEX_NAME = os.getenv('AZURE_COGNITIVE_SEARCH_INDEX_NAME')
+AZURE_COGNITIVE_SEARCH_INDEXER_NAME = os.getenv('AZURE_COGNITIVE_SEARCH_INDEXER_NAME')
+AZURE_COGNITIVE_SEARCH_DATASOURCE_NAME = os.getenv('AZURE_COGNITIVE_SEARCH_DATASOURCE_NAME')
+AZURE_COGNITIVE_SEARCH_SKILLSET_NAME = os.getenv('AZURE_COGNITIVE_SEARCH_SKILLSET_NAME')
+AZURE_COGNITIVE_SEARCH_FUNCTION_URI = os.getenv('AZURE_COGNITIVE_SEARCH_FUNCTION_URI')
+AZURE_STORAGE_ACCOUNT_NAME = os.getenv('AZURE_STORAGE_ACCOUNT_NAME')
+AZURE_STORAGE_BLOB_CONTAINER_NAME = os.getenv('AZURE_STORAGE_BLOB_CONTAINER_NAME')
+AZURE_STORAGE_ACCESS_KEY = os.getenv('AZURE_STORAGE_ACCESS_KEY')
 
 # Application definition
 
@@ -147,11 +138,3 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-MESSAGE_TAGS = {
-    messages.DEBUG: 'alert-info',
-    messages.INFO: 'alert-info',
-    messages.SUCCESS: 'alert-success',
-    messages.WARNING: 'alert-warning',
-    messages.ERROR: 'alert-danger',
-}

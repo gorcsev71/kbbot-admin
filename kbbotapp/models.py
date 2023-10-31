@@ -1,5 +1,5 @@
 import os
-from django.conf import settings as sttngs
+from django.conf import settings as app_settings
 from django.db import models
 
 # Create your models here.
@@ -19,44 +19,44 @@ class Settings(models.Model):
         GPT4 = 'gpt-4', 'GPT 4'
 
     openai_api_key = models.CharField(max_length=60,
-                                      default=sttngs.OPENAI_API_KEY,
+                                      default=app_settings.OPENAI_API_KEY,
                                       verbose_name="OpenAI API Key")
     openai_embedding_model = models.CharField(max_length=30, 
-                                              default=sttngs.OPENAI_EMBEDDING_MODEL,
+                                              default=app_settings.OPENAI_EMBEDDING_MODEL,
                                               verbose_name="OpenAI Embedding Model")
     openai_model_name = models.CharField(max_length=20,
                                          choices=OpenAIModelChoices.choices,
                                          default = OpenAIModelChoices.GPT3,
                                          verbose_name="OpenAI Language Model")
     azure_cognitive_search_service_name = models.CharField(max_length=50, 
-                                                           default=sttngs.AZURE_COGNITIVE_SEARCH_SERVICE_NAME,
+                                                           default=app_settings.AZURE_COGNITIVE_SEARCH_SERVICE_NAME,
                                                            verbose_name="Azure Search Service")
     azure_cognitive_search_api_key = models.CharField(max_length=60, 
-                                                      default=sttngs.AZURE_COGNITIVE_SEARCH_API_KEY,
+                                                      default=app_settings.AZURE_COGNITIVE_SEARCH_API_KEY,
                                                       verbose_name="Azure Search API Key")
     azure_cognitive_search_index_name = models.CharField(max_length=50, 
-                                                         default=sttngs.AZURE_COGNITIVE_SEARCH_INDEX_NAME,
+                                                         default=app_settings.AZURE_COGNITIVE_SEARCH_INDEX_NAME,
                                                          verbose_name="Azure Search Index")
     azure_cognitive_search_indexer_name = models.CharField(max_length=50, 
-                                                         default=sttngs.AZURE_COGNITIVE_SEARCH_INDEXER_NAME,
+                                                         default=app_settings.AZURE_COGNITIVE_SEARCH_INDEXER_NAME,
                                                          verbose_name="Azure Search Indexer")
     azure_cognitive_search_datasource_name = models.CharField(max_length=50, 
-                                                         default=sttngs.AZURE_COGNITIVE_SEARCH_DATASOURCE_NAME,
+                                                         default=app_settings.AZURE_COGNITIVE_SEARCH_DATASOURCE_NAME,
                                                          verbose_name="Azure Search Datasource")
     azure_cognitive_search_skillset_name = models.CharField(max_length=50, 
-                                                         default=sttngs.AZURE_COGNITIVE_SEARCH_SKILLSET_NAME,
+                                                         default=app_settings.AZURE_COGNITIVE_SEARCH_SKILLSET_NAME,
                                                          verbose_name="Azure Search Custom Skillset")
     azure_cognitive_search_function_uri = models.CharField(max_length=100, 
-                                                         default=sttngs.AZURE_COGNITIVE_SEARCH_FUNCTION_URI,
+                                                         default=app_settings.AZURE_COGNITIVE_SEARCH_FUNCTION_URI,
                                                          verbose_name="Azure Search Custom Skill Function URL")
     azure_storage_account_name = models.CharField(max_length=50, 
-                                                         default=sttngs.AZURE_STORAGE_ACCOUNT_NAME,
+                                                         default=app_settings.AZURE_STORAGE_ACCOUNT_NAME,
                                                          verbose_name="Azure Storage")
     azure_storage_blob_container_name = models.CharField(max_length=50, 
-                                                         default=sttngs.AZURE_STORAGE_BLOB_CONTAINER_NAME,
+                                                         default=app_settings.AZURE_STORAGE_BLOB_CONTAINER_NAME,
                                                          verbose_name="Azure Blob Container")
     azure_storage_access_key = models.CharField(max_length=100, 
-                                                         default=sttngs.AZURE_STORAGE_ACCESS_KEY,
+                                                         default=app_settings.AZURE_STORAGE_ACCESS_KEY,
                                                          verbose_name="Azure Storage Access Key")
     index_status = models.IntegerField(choices=IndexStatusChoices.choices, default=IndexStatusChoices.OBSOLETE)
 

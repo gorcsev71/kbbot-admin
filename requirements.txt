@@ -1,6 +1,6 @@
 django
 django-bootstrap5
-django-environ
+python-dotenv
 pypdf2
 pandas
 openai

@@ -55,11 +55,16 @@ def read_app_settings()->Settings:
 
 """ -----  HOMEPAGE  ----- """
 
-class Home(TemplateView):
+class Home(ListView):
+    model = Document
     template_name = "kbbotapp/home.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["documents_count"] = Document.objects.count()
+        app_settings = read_app_settings()
+        context["index_status"] = app_settings.index_status
+        context["index_status_text"] = app_settings.get_index_status_display()
         return context
     
 """ ----- CHAT ----- """

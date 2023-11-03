@@ -14,4 +14,33 @@ Home
 <p>You can either 
 <a href="{% url 'kbbotapp:chat' %}" class="btn btn-sm btn-outline-primary">Chat</a> with me, or 
 <a href="{% url 'kbbotapp:config_home' %}" class="btn btn-sm btn-outline-primary">Configure</a> my knowledge base.
+<p></p>
+<div class="card">
+    <div class="card-header text-muted">
+        Knowledge Base documents: <strong>{{documents_count}}</strong>
+    </div>
+    <div class="card-body">
+        {% for document in document_list %} 
+        <!-- Display Objects -->
+        <div class="row" style="padding: 3px;">
+            <div class="col-3">
+                <strong>{{ document.name }}</strong>
+            </div>
+            <div class="col-7">
+                {{ document.file_name }}
+            </div>
+            <div class="col-1">
+                {{ document.pages.count }} pages
+            </div>
+        </div>
+        <!-- If object_list is empty  -->
+        {% empty %} 
+        <li>No documents yet.</li> 
+        {% endfor %}         
+    </div>
+    <div class="card-footer text-muted">
+        Index status: <strong>{{index_status_text}}</strong>
+    </div>
+</div>
+
 {% endblock %}
